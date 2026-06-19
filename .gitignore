@@ -1,0 +1,25 @@
+# Git Ignore
+
+# DB Local
+db/
+*.sqlite3
+
+# Archivos de entorno
+.env
+
+# Claves privadas
+*.key
+*.pem
+
+# Archivos estaticos generados
+staticfiles/
+media/
+
+# Entorno virtual de Python
+.venv/
+env/
+venv/
+__pycache__/
+
+# Archivo para que el plugin de VSCode detecte y autocomplete tailwind
+tailwind.config.js
