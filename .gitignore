@@ -6,7 +6,6 @@ db/
 
 # Archivos de entorno
 .env
-
 # Claves privadas
 *.key
 *.pem
@@ -19,6 +18,7 @@ media/
 .venv/
 env/
 venv/
+.enviroment/
 __pycache__/
 
 # Archivo para que el plugin de VSCode detecte y autocomplete tailwind

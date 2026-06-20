@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Plataforma de Videojuegos{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
+    <!-- Barra de Navegación -->
+    <nav class="bg-gray-800 text-white p-4 shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="{% url 'index' %}" class="text-xl font-bold hover:text-gray-300">GameStore</a>
+            
+            <div class="flex items-center space-x-6">
+                <!-- Dropdown de Categorías inyectadas por el Context Processor -->
+                <div class="relative group">
+                    <button class="hover:text-gray-300 flex items-center space-x-1">
+                        <span>Géneros</span>
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                    </button>
+                    <div class="absolute hidden group-hover:block bg-gray-700 text-white rounded mt-1 p-2 space-y-1 w-48 shadow-lg z-50">
+                        {% for cat in global_categorias %}
+                            <span class="block px-2 py-1 text-sm rounded bg-gray-600 mb-1">{{ cat.nombre }}</span>
+                        {% empty %}
+                            <span class="block px-2 py-1 text-gray-400 text-sm">Sin géneros</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Estado del Usuario -->
+                {% if user.is_authenticated %}
+                    <span class="text-green-400 font-semibold">Saldo: ${{ user.saldo }}</span>
+                    <a href="{% url 'cargar_saldo' %}" class="hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded transition">Cargar Saldo</a>
+                    {% if perms.store.add_videojuego %}
+                        <a href="{% url 'videojuego_crear' %}" class="hover:text-gray-300 text-sm bg-blue-700 hover:bg-blue-600 px-3 py-1 rounded transition font-semibold">Cargar Juego</a>
+                    {% endif %}
+                    <span class="text-gray-300 text-sm">Hola, <strong>{{ user.username }}</strong></span>
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="Avatar" class="w-8 h-8 rounded-full border border-gray-600 object-cover">
+                    {% endif %}
+                    <form action="{% url 'logout' %}" method="POST" class="inline">
+                        {% csrf_token %}
+                        <button type="submit" class="text-red-400 hover:text-red-300 text-sm font-semibold ml-2">Salir</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}" class="hover:text-gray-300">Ingresar</a>
+                    <a href="{% url 'register' %}" class="hover:text-gray-300 bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded transition">Registrarse</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenedor de Mensajes de Alerta -->
+    <div class="container mx-auto mt-4 px-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="p-4 mb-2 rounded {% if message.tags == 'error' %}bg-red-200 text-red-800 border-red-300{% elif message.tags == 'success' %}bg-green-200 text-green-800 border-green-300{% else %}bg-yellow-200 text-yellow-800 border-yellow-300{% endif %} border font-medium">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Contenido Principal -->
+    <main class="flex-grow container mx-auto p-4">
+        {% block contenido %}{% endblock %}
+    </main>
+
+    <!-- Pie de Página -->
+    <footer class="bg-gray-800 text-gray-400 p-4 text-center mt-8 border-t border-gray-700">
+        <p>&copy; 2026 GameStore - Proyecto Académico Django</p>
+    </footer>
+</body>
+</html>
