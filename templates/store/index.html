@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Catálogo - GameStore{% endblock %}
+
+{% block contenido %}
+<h1 class="text-3xl font-bold mb-6 text-gray-800">Catálogo de Videojuegos</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {% for juego in videojuegos %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col border border-gray-200">
+            {% if juego.imagen_portada %}
+                <img src="{{ juego.imagen_portada.url }}" alt="{{ juego.titulo }}" class="w-full h-48 object-cover">
+            {% else %}
+                <div class="w-full h-48 bg-gray-300 flex items-center justify-center text-gray-500 font-semibold">Sin Portada</div>
+            {% endif %}
+            <div class="p-4 flex-grow flex flex-col justify-between">
+                <div>
+                    <h2 class="text-xl font-bold mb-1 text-gray-800">{{ juego.titulo }}</h2>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ juego.descripcion }}</p>
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-lg font-extrabold text-blue-600">${{ juego.precio }}</span>
+                        <span class="text-xs font-semibold px-2.5 py-0.5 rounded {% if juego.edad_minima >= 18 %}bg-red-100 text-red-800{% elif juego.edad_minima >= 13 %}bg-yellow-100 text-yellow-800{% else %}bg-green-100 text-green-800{% endif %}">
+                            +{{ juego.edad_minima }} años
+                        </span>
+                    </div>
+                    
+                    {% if user.is_authenticated %}
+                        {% if edad_usuario < juego.edad_minima %}
+                            <button class="w-full bg-gray-400 text-white py-2 px-4 rounded cursor-not-allowed text-center text-sm font-semibold shadow-sm" disabled>
+                                Restringido (+{{ juego.edad_minima }} años)
+                            </button>
+                        {% else %}
+                            <a href="{% url 'videojuego_detalle' juego.pk %}" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded text-sm font-semibold transition shadow-sm">
+                                Ver Detalle / Comprar
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}" class="block w-full bg-gray-700 hover:bg-gray-800 text-white text-center py-2 px-4 rounded text-sm font-semibold transition shadow-sm">
+                            Ingresar para Comprar
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-gray-500 col-span-3 text-center py-8">No hay videojuegos disponibles en el catálogo en este momento.</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from datetime import date
 
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, verbose_name="Correo Electrónico")
@@ -11,3 +12,9 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    def get_edad(self):
+        if not self.fecha_nacimiento:
+            return 0
+        today = date.today()
+        return today.year - self.fecha_nacimiento.year - ((today.month, today.day) < (self.fecha_nacimiento.month, self.fecha_nacimiento.day))
