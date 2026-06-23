@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
-{% block titulo %}Cargar Videojuego - GameStore{% endblock %}
+{% block titulo %}{% if editando %}Editar Videojuego{% else %}Cargar Videojuego{% endif %} - GameStore{% endblock %}
 
 {% block contenido %}
 <div class="bg-white rounded-lg shadow-md p-6 max-w-lg mx-auto border border-gray-200">
-    <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Cargar Nuevo Videojuego</h1>
+    <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">
+        {% if editando %}Editar: {{ videojuego.titulo }}{% else %}Cargar Nuevo Videojuego{% endif %}
+    </h1>
     
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -14,7 +16,13 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-1">{{ field.label }}</label>
                     
                     {% if field.field.widget.input_type == 'file' %}
-                        <input type="file" name="{{ field.html_name }}" class="w-full text-sm text-gray-550 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" required>
+                        {% if editando and videojuego.imagen_portada %}
+                            <div class="mb-2 flex items-center gap-3">
+                                <img src="{{ videojuego.imagen_portada.url }}" alt="Portada actual" class="w-16 h-16 object-cover rounded border border-gray-300">
+                                <span class="text-xs text-gray-500">Portada actual. Dejá el campo vacío para conservarla.</span>
+                            </div>
+                        {% endif %}
+                        <input type="file" name="{{ field.html_name }}" class="w-full text-sm text-gray-550 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" {% if not editando %}required{% endif %}>
                     {% elif field.html_name == 'categorias' %}
                         <div class="space-y-2 border p-3 rounded bg-gray-50 max-h-40 overflow-y-auto">
                             {{ field }}
