@@ -3,20 +3,20 @@
 {% block titulo %}Catálogo - GameStore{% endblock %}
 
 {% block contenido %}
-<h1 class="text-3xl font-bold mb-6 text-gray-800">Catálogo de Videojuegos</h1>
+<h1 class="text-3xl font-bold mb-6 text-white">Catálogo de Videojuegos</h1>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 md:grid-cols-6 gap-6 text-center">
     {% for juego in videojuegos %}
-        <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col border border-gray-200">
+        <div class="bg-gray-100 rounded-lg shadow-md overflow-hidden flex flex-col border border-gamestore-electric
+        hover:scale-105 transform transition-all duration-100">
             {% if juego.imagen_portada %}
-                <img src="{{ juego.imagen_portada.url }}" alt="{{ juego.titulo }}" class="w-full h-48 object-cover">
+                <img src="{{ juego.imagen_portada.url }}" alt="{{ juego.titulo }}" class="w-full h-72 object-cover">
             {% else %}
-                <div class="w-full h-48 bg-gray-300 flex items-center justify-center text-gray-500 font-semibold">Sin Portada</div>
+                <div class="w-48 h-64 bg-gray-300 flex items-center justify-center text-gray-500 font-semibold">Sin Portada</div>
             {% endif %}
             <div class="p-4 flex-grow flex flex-col justify-between">
                 <div>
                     <h2 class="text-xl font-bold mb-1 text-gray-800">{{ juego.titulo }}</h2>
-                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ juego.descripcion }}</p>
                 </div>
                 <div>
                     <div class="flex justify-between items-center mb-4">
@@ -45,7 +45,7 @@
             </div>
         </div>
     {% empty %}
-        <p class="text-gray-500 col-span-3 text-center py-8">No hay videojuegos disponibles en el catálogo en este momento.</p>
+        <p class="text-gamestore-muted col-span-3 text-center py-8">No hay videojuegos disponibles en el catálogo en este momento.</p>
     {% endfor %}
 </div>
 {% endblock %}
