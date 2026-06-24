@@ -11,4 +11,6 @@ urlpatterns = [
     path('videojuegos/<int:pk>/resenas/crear/', views.resena_crear, name='resena_crear'),
     path('resenas/<int:pk>/editar/', views.resena_editar, name='resena_editar'),
     path('resenas/<int:pk>/eliminar/', views.resena_eliminar, name='resena_eliminar'),
+    path('biblioteca/', views.biblioteca, name='biblioteca'),
+    path('historial/', views.historial_compras, name='historial_compras'),
 ]

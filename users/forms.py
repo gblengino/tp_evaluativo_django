@@ -14,3 +14,8 @@ class CustomUserForm(UserCreationForm):
     class Meta:
         model = CustomUser
         fields = UserCreationForm.Meta.fields + ('email', 'fecha_nacimiento', 'avatar')
+
+class EditarPerfilForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'avatar']

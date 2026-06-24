@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Biblioteca - GameStore{% endblock %}
+
+{% block contenido %}
+<h1 class="text-3xl font-bold mb-6 text-white uppercase">Mi Biblioteca</h1>
+
+<div class="flex flex-col items-center w-full gap-6">
+    {% for videojuego in biblioteca %}
+        <div class="w-full h-36 bg-gamestore-secondary rounded-lg shadow-md overflow-hidden flex border border-slate-800/50
+        hover:scale-105 transform transition-all duration-200">
+            {% if videojuego.imagen_portada %}
+                <img src="{{ videojuego.imagen_portada.url }}" alt="{{ videojuego.titulo }}" class="w-24 h-36 object-cover">
+            {% else %}
+                <div class="w-24 h-36 bg-gray-300 flex items-center justify-center text-gray-500 font-semibold">Sin Portada</div>
+            {% endif %}
+            <div class="p-4 flex-grow flex flex-col">
+                <h2 class="text-xl font-bold mb-1 text-gray-100">{{ videojuego.titulo }}</h2>
+                <p class="min-w-0 text-sm text-gamestore-muted line-clamp-2 break-words">{{ videojuego.descripcion }}</p>
+                <div class="bg-gamestore-electric/20 border border-gamestore-electric/50 self-start px-4 py-1.5 mt-2 rounded-full text-sm
+                hover:bg-gamestore-electric hover:cursor-pointer transition-colors duration-200">
+                    <a href="{% url 'videojuego_detalle' videojuego.pk %}">
+                        <span>Ver Página de la Tienda</span>
+                    </a>
+                </div>
+            </div>
+            <div class="ml-auto p-2 self-center m-8 bg-emerald-500/20 w-12 h-12 rounded-lg border border-emerald-500 text-white
+            hover:bg-emerald-500 transition-colors shadow-md hover:cursor-pointer">
+                <i data-lucide="download" class="w-8 h-8"></i>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-gamestore-muted col-span-3 text-center py-8">Aún no has comprado ningún videojuego, cuando compres uno, aparecerá aquí.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -20,7 +20,7 @@ def videojuego_detalle(request, pk):
     videojuego = get_object_or_404(Videojuego, pk=pk)
     
     # Verificación de edad en backend
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.is_staff:
         if request.user.get_edad() < videojuego.edad_minima:
             messages.error(request, f"No tienes edad suficiente para ver los detalles de {videojuego.titulo}.")
             return redirect('index')
@@ -178,3 +178,15 @@ def resena_eliminar(request, pk):
         return redirect('videojuego_detalle', pk=videojuego_pk)
 
     return render(request, 'store/resena_confirm_delete.html', {'resena': resena})
+
+@login_required
+def biblioteca(request):
+    biblioteca = Videojuego.objects.filter(compra__usuario=request.user).distinct()
+
+    return render(request, 'store/biblioteca.html', {'biblioteca': biblioteca})
+
+@login_required
+def historial_compras(request):
+    compras = Compra.objects.filter(usuario=request.user).select_related('videojuego').order_by('-fecha_compra')
+
+    return render(request, 'store/historial.html', {'historial_compras': compras})

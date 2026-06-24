@@ -4,11 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from decimal import Decimal, InvalidOperation
 
-from .forms import CustomUserForm
+from .forms import CustomUserForm, EditarPerfilForm
 
 def register_user(request):
     if request.method == 'POST':
-        form = CustomUserForm(request.POST, request.FILES) # Note request.FILES to support avatars
+        form = CustomUserForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             login(request, user)
@@ -36,3 +36,16 @@ def cargar_saldo(request):
             messages.error(request, "Por favor, ingresa un monto válido.")
             
     return render(request, 'users/cargar_saldo.html')
+
+@login_required
+def mi_perfil(request):
+    if request.method == 'POST':
+        form = EditarPerfilForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "¡Perfil actualizado correctamente!")
+            return redirect('mi_perfil')
+    else:
+        form = EditarPerfilForm(instance=request.user)
+        
+    return render(request, 'users/perfil.html', {'form': form})
