@@ -1,40 +1,48 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 {% block titulo %}{% if editando %}Editar Videojuego{% else %}Cargar Videojuego{% endif %} - GameStore{% endblock %}
 
 {% block contenido %}
-<div class="bg-white rounded-lg shadow-md p-6 max-w-lg mx-auto border border-gray-200">
-    <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">
+
+<div class="bg-gamestore-dark rounded-lg shadow-md p-6 max-w-lg mx-auto border border-slate-800/50">
+    <h1 class="text-3xl font-bold mb-6 text-center text-white uppercase">
         {% if editando %}Editar: {{ videojuego.titulo }}{% else %}Cargar Nuevo Videojuego{% endif %}
     </h1>
     
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-start gap-2">
+                <i data-lucide="alert-triangle" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+                <div>
+                    {% for error in form.non_field_errors %}
+                        <p class="font-medium">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
         <div class="space-y-4">
             {% for field in form %}
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">{{ field.label }}</label>
-                    
-                    {% if field.field.widget.input_type == 'file' %}
+                <div class="flex flex-col gap-1.5">
+                    <label for="{{field.id_for_label}}" class="text-xs font-gamestore-muted uppercase tracking-wider font-semibold">
+                        {{ field.label }}
+                    </label>
+
+                    {% if field|widget_type == 'fileinput' or field|widget_type == 'clearablefileinput' %}
                         {% if editando and videojuego.imagen_portada %}
                             <div class="mb-2 flex items-center gap-3">
                                 <img src="{{ videojuego.imagen_portada.url }}" alt="Portada actual" class="w-16 h-16 object-cover rounded border border-gray-300">
                                 <span class="text-xs text-gray-500">Portada actual. Dejá el campo vacío para conservarla.</span>
                             </div>
                         {% endif %}
-                        <input type="file" name="{{ field.html_name }}" class="w-full text-sm text-gray-550 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" {% if not editando %}required{% endif %}>
+                        {% render_field field class="w-full text-gray-100 file:hover:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:text-gamestore-dark file:bg-gray-200 hover:file:bg-gamestore-electric/40 hover:file:text-white file:transition-colors file:duration-200" %}
                     {% elif field.html_name == 'categorias' %}
-                        <div class="space-y-2 border p-3 rounded bg-gray-50 max-h-40 overflow-y-auto">
+                        <div class="w-full flex bg-transparent text-gray-100 [&>div]:flex-1 [&>div]:grid [&>div]:grid-cols-1 [&>div]:md:grid-cols-3">
                             {{ field }}
                         </div>
-                    {% elif field.field.widget.input_type == 'select' %}
-                        <select name="{{ field.html_name }}" class="w-full border p-2 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            {% for val, label in field.field.choices %}
-                                <option value="{{ val }}">{{ label }}</option>
-                            {% endfor %}
-                        </select>
                     {% else %}
-                        <input type="{{ field.field.widget.input_type|default:'text' }}" name="{{ field.html_name }}" class="w-full border p-2 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        {% render_field field class="w-full border border-gamestore-muted/20 p-2 rounded shadow-sm bg-gamestore-secondary text-white focus:outline-none focus:ring-2 focus:ring-gamestore-electric" WIDGET_ERROR_CLASS="border-red-500 bg-red-500/5 focus:border-red-500" %}
                     {% endif %}
                     
                     {% if field.errors %}
@@ -43,7 +51,7 @@
                 </div>
             {% endfor %}
         </div>
-        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded mt-6 transition shadow-sm">
+        <button type="submit" class="w-full bg-gamestore-electric hover:bg-gamestore-electric/50 text-white font-semibold py-2.5 rounded-lg mt-6 transition shadow-sm ">
             Guardar Videojuego
         </button>
     </form>

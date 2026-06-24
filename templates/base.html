@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,47 +8,112 @@
     <title>{% block titulo %}Plataforma de Videojuegos{% endblock %}</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+            extend: {
+                colors: {
+                gamestore: {
+                    dark: '#0B2545',       /* Azul marino oscuro (Logo/Navbar) */
+                    electric: '#1391F5',   /* Azul eléctrico (Acentos/Hovers) */
+                    secondary: '#13315C',  /* Azul intermedio (Fondos alternativos) */
+                    muted: '#8DA9C4',      /* Gris azulado (Textos secundarios) */
+                }
+                },
+                backgroundImage: {
+                    'store-pattern': "url('{% static 'img/gamestore-bg.png' %}')",
+                }
+            }
+            }
+        }
+    </script>
+    <!-- Lucide icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
-<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
+<body class="text-white w-full min-h-screen flex flex-col bg-store-pattern">
     <!-- Barra de Navegación -->
-    <nav class="bg-gray-800 text-white p-4 shadow-md">
+    <nav class="bg-gamestore-dark text-white p-4 shadow-md">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="{% url 'index' %}" class="text-xl font-bold hover:text-gray-300">GameStore</a>
-            
-            <div class="flex items-center space-x-6">
-                <!-- Dropdown de Categorías inyectadas por el Context Processor -->
-                <div class="relative group">
-                    <button class="hover:text-gray-300 flex items-center space-x-1">
-                        <span>Géneros</span>
-                        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
-                    </button>
-                    <div class="absolute hidden group-hover:block bg-gray-700 text-white rounded mt-1 p-2 space-y-1 w-48 shadow-lg z-50">
-                        {% for cat in global_categorias %}
-                            <span class="block px-2 py-1 text-sm rounded bg-gray-600 mb-1">{{ cat.nombre }}</span>
-                        {% empty %}
-                            <span class="block px-2 py-1 text-gray-400 text-sm">Sin géneros</span>
+            <div class="flex gap-6">
+                <a href="{% url 'index' %}" class="text-3xl font-bold hover:text-gamestore-electric">GAMESTORE</a>
+                <ul class="flex items-center gap-4">
+                    {% if user.is_authenticated %}
+                        {% for item in GLOBAL_MENU_NAVBAR %}
+                            <a href=""
+                                class="flex items-center gap-2 text-xl font-medium transition-colors self-center uppercase
+                                {% if request.resolver_match.url_name == item.url %} text-gamestore-electric underline underline-offset-8 {% else %} text-gamestore-muted hover:text-white {% endif %}">
+                                {{item.texto}}
+                            </a>
                         {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Estado del Usuario -->
+                    {% else %}
+                        {% for item in GLOBAL_MENU_NAVBAR %}
+                        {% if not item.login_required %}
+                            <a href=""
+                                class="flex items-center gap-2 text-xl font-medium transition-colors self-center uppercase
+                                {% if request.resolver_match.url_name == item.url %} text-gamestore-electric underline underline-offset-8 {% else %} text-gamestore-muted hover:text-white {% endif %}">
+                                {{item.texto}}
+                            </a>
+                        {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="flex items-stretch space-x-6">
                 {% if user.is_authenticated %}
-                    <span class="text-green-400 font-semibold">Saldo: ${{ user.saldo }}</span>
-                    <a href="{% url 'cargar_saldo' %}" class="hover:text-gray-300 text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded transition">Cargar Saldo</a>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2 bg-gamestore-secondary/50 border border-gamestore-muted/20 px-3 py-1.5 rounded-lg group 
+                        hover:border-gamestore-electric/50 transition-colors cursor-pointer">
+                            <i data-lucide="wallet" class="w-6 h-6 text-gamestore-muted group-hover:text-gamestore-electric transition-colors"></i>
+                            <div class="flex flex-col text-right">
+                                <span class="text-[10px] text-gamestore-muted uppercase tracking-wider font-semibold leading-none">Mi Saldo</span>
+                                <span class="text-sm font-bold text-white">${{ user.saldo }}</span>
+                            </div>
+                            <a href="{% url 'cargar_saldo' %}" class="ml-1 bg-gamestore-electric/20 hover:bg-gamestore-electric text-gamestore-electric 
+                            hover:text-white p-1 rounded transition-colors" title="Cargar saldo">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            </a>
+                        </div>
+                    </div>
                     {% if perms.store.add_videojuego %}
-                        <a href="{% url 'videojuego_crear' %}" class="hover:text-gray-300 text-sm bg-blue-700 hover:bg-blue-600 px-3 py-1 rounded transition font-semibold">Cargar Juego</a>
+                        <a href="{% url 'videojuego_crear' %}" 
+                        class="flex items-center gap-2 border border-gamestore-electric/40 bg-gamestore-electric/5 hover:bg-gamestore-electric 
+                        text-gamestore-electric hover:text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 
+                        shadow-lg shadow-gamestore-electric/5 hover:shadow-gamestore-electric/20 group">
+                            <i data-lucide="plus-circle" class="w-4 h-4 text-gamestore-electric group-hover:text-white transition-colors"></i>
+                            <span>Cargar Juego</span>
+                        </a>
                     {% endif %}
-                    <span class="text-gray-300 text-sm">Hola, <strong>{{ user.username }}</strong></span>
-                    {% if user.avatar %}
-                        <img src="{{ user.avatar.url }}" alt="Avatar" class="w-8 h-8 rounded-full border border-gray-600 object-cover">
-                    {% endif %}
-                    <form action="{% url 'logout' %}" method="POST" class="inline">
+                    <div class="flex items-center justify-center gap-3 bg-gamestore-secondary/50 border border-gamestore-electric/40 px-3 rounded-lg
+                    hover:border-gamestore-electric/50 transition-colors cursor-pointer">
+                        {% if user.avatar %}
+                            <img src="{{ user.avatar.url }}" alt="Avatar" class="w-8 h-8 rounded-full border border-gray-600 object-cover">
+                        {% else %}
+                            <div class="w-8 h-8 bg-gamestore-secondary border border-gamestore-muted rounded-full flex items-center justify-center
+                            text-gamestore-muted hover:text-white transition-colors cursor-pointer">
+                                <i data-lucide="user" class="w-5 h-5"></i> </div>
+                        {% endif %}
+                        <span class="text-white font-semibold text-lg">{{ user.username }}</span>
+                    </div>
+                    <form action="{% url 'logout' %}" method="POST" class="flex items-center bg-red-400/10 rounded-lg text-red-400 border border-red-400/40
+                        hover:bg-red-500 hover:text-white transition-all duration-200 shadow-lg shadow-red-400/5 hover:shadow-red-400/30">
                         {% csrf_token %}
-                        <button type="submit" class="text-red-400 hover:text-red-300 text-sm font-semibold ml-2">Salir</button>
+                        <button type="submit" class="flex-1 h-full px-4 text-md font-semibold">
+                            Cerrar Sesión
+                        </button>
                     </form>
                 {% else %}
-                    <a href="{% url 'login' %}" class="hover:text-gray-300">Ingresar</a>
-                    <a href="{% url 'register' %}" class="hover:text-gray-300 bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded transition">Registrarse</a>
+                    <a href="{% url 'login' %}" 
+                        class="flex items-center border border-gamestore-electric/40 bg-gamestore-electric-5 hover:bg-gamestore-electric text-gamestore-electric
+                        hover:text-white px-3 py-1.5 rounded-lg text-md font-medium transition-all duration-200 shadow-lg shadow-gamestore-electric/5
+                        hover:shadow-gamestore-electric/20">
+                        Ingresar
+                    </a>
+                    <a href="{% url 'register' %}" 
+                        class="flex items-center bg-gamestore-electric text-gray-100 px-4 py-1.5 rounded-lg border border-gamestore-electric/50 
+                        font-medium shadow-lg shadow-gamestore-electric/5 hover:shadow-gamestore-electric/20 transition-all duration-200">
+                        Registrarse
+                    </a>
                 {% endif %}
             </div>
         </div>
@@ -69,8 +136,31 @@
     </main>
 
     <!-- Pie de Página -->
-    <footer class="bg-gray-800 text-gray-400 p-4 text-center mt-8 border-t border-gray-700">
-        <p>&copy; 2026 GameStore - Proyecto Académico Django</p>
+    <footer class="bg-gamestore-dark border-t border-gamestore-secondary/30 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            
+            <p class="text-sm text-gamestore-muted">
+            &copy; 2026 GameStore. Todos los derechos reservados.
+            </p>
+
+            <div class="flex items-center gap-5">
+            {% for red in GLOBAL_REDES_SOCIALES %}
+                <a href="{{ red.url }}" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="text-gamestore-muted text-xl transition-colors duration-200 {{ red.color }}"
+                title="Seguinos en {{ red.plataforma }}">
+                
+                <i class="{{ red.icono }}"></i>
+                
+                </a>
+            {% endfor %}
+            </div>
+
+        </div>
     </footer>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
