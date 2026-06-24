@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block titulo %}{% if editando %}Editar Reseña{% else %}Escribir Reseña{% endif %} — {{ videojuego.titulo }}{% endblock %}
+
+{% block contenido %}
+<div class="bg-gamestore-dark rounded-lg shadow-md p-6 max-w-lg mx-auto border border-slate-800/50">
+    <h1 class="text-3xl font-bold mb-1 text-white uppercase">
+        {% if editando %}Editar reseña{% else %}Escribir reseña{% endif %}
+    </h1>
+    <p class="text-md text-gray-200 mb-6 uppercase">Juego: <strong class="underline">{{ videojuego.titulo }}</strong></p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="space-y-4">
+            {% for field in form %}
+                <div class="flex flex-col gap-1.5">
+                    <label for="{{field.id_for_label}}" class="text-xs font-gamestore-muted uppercase tracking-wider font-semibold">
+                        {{ field.label }}
+                    </label>
+                    {% if field.html_name == 'calificacion' %}
+                    <div class="relative w-full">
+                        {% render_field field min="1" max="5" class="w-full border border-gamestore-muted/20 p-2 rounded shadow-sm bg-gamestore-secondary text-white focus:outline-none focus:ring-2 focus:ring-gamestore-electric" WIDGET_ERROR_CLASS="border-red-500 bg-red-500/5 focus:border-red-500" %}
+                        <p class="text-xs text-gray-400 mt-1">Ingresá un valor del 1 al 5 (★ mínimo — ★★★★★ máximo)</p>
+                        {% if field.errors %}
+                            <div class="absolute right-3 top-1/2 -translate-y-1/2 text-red-400">
+                                <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="relative w-full">
+                        {% render_field field class="w-full border border-gamestore-muted/20 p-2 rounded shadow-sm bg-gamestore-secondary text-white focus:outline-none focus:ring-2 focus:ring-gamestore-electric" WIDGET_ERROR_CLASS="border-red-500 bg-red-500/5 focus:border-red-500" %}
+                    </div>
+                    {% if field.errors %}
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2 text-red-400">
+                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                        </div>
+                    {% endif %}
+                    {% endif %}
+                    {% if field.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ field.errors.as_text }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="flex gap-3 mt-6">
+            <button type="submit" class="flex-1 bg-gamestore-electric hover:bg-gamestore-electric/50 text-white font-bold py-2.5 
+            rounded-lg transition-all shadow-md border border-gamestore-electric/5">
+                {% if editando %}Guardar cambios{% else %}Publicar reseña{% endif %}
+            </button>
+            <a href="{% url 'videojuego_detalle' videojuego.pk %}" class="flex-1 text-center bg-zinc-600 hover:bg-zinc-800 
+            text-white font-semibold py-2.5 rounded-lg transition-colors border border-zinc-700 shadow-md">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

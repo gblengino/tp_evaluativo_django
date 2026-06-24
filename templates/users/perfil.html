@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block titulo %} Mi Perfil - GameStore {% endblock %}
+
+{% block contenido %}
+<section class="w-full flex justify-center py-4">
+    <div class="w-full max-w-md bg-gamestore-secondary border border-slate-800/50 rounded-2xl p-8 shadow-2xl">
+        
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-white tracking-tight">Mi Perfil</h1>
+                <p class="text-sm text-gamestore-muted mt-1">Gestioná los datos de tu cuenta</p>
+            </div>
+            
+            <button id="btn-editar" onclick="conmutarModoEdicion()" class="flex items-center gap-1.5 bg-gamestore-secondary border border-gamestore-muted/30 text-white text-xs font-semibold px-3 py-2 rounded-lg hover:bg-gamestore-secondary/80 transition-colors">
+                <i data-lucide="user-cog" class="w-4 h-4"></i>
+                <span id="texto-btn">Editar Perfil</span>
+            </button>
+        </div>
+
+        <div id="vista-lectura" class="space-y-5">
+            <div class="flex flex-col items-center gap-3 pb-4 border-b border-gamestore-muted/10">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="Avatar" class="w-20 h-20 rounded-full border-2 border-gamestore-electric/50 shadow-md object-cover">
+                {% else %}
+                    <div class="w-20 h-20 bg-gamestore-secondary border border-gamestore-muted rounded-full flex items-center justify-center text-gamestore-muted">
+                        <i data-lucide="user" class="w-10 h-10"></i>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="space-y-3">
+                <div>
+                    <span class="block text-xs text-gamestore-muted uppercase font-semibold tracking-wider">Nombre de usuario</span>
+                    <span class="text-white text-base font-medium">{{ user.username }}</span>
+                </div>
+                <div>
+                    <span class="block text-xs text-gamestore-muted uppercase font-semibold tracking-wider">Correo Electrónico</span>
+                    <span class="text-white text-base font-medium">{{ user.email|default:"No cargado" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="vista-edicion" class="hidden">
+            <form method="POST" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+                <div class="space-y-4">
+                    {% for field in form %}
+                        <div class="flex flex-col gap-1.5">
+                            <label for="{{ field.id_for_label }}" class="text-xs text-gamestore-muted uppercase tracking-wider font-semibold">
+                                {{ field.label }}
+                            </label>
+                            <div class="relative w-full">
+                                {% render_field field class="w-full bg-gamestore-secondary border border-gamestore-muted/20 text-white rounded-lg px-3 py-2.5 text-sm transition-colors focus:outline-none focus:border-gamestore-electric" WIDGET_ERROR_CLASS="border-red-500 bg-red-500/5 focus:border-red-500" %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="flex gap-3 mt-6">
+                    <button type="button" onclick="conmutarModoEdicion()" class="flex-1 bg-gamestore-secondary text-gamestore-muted font-bold py-2.5 rounded-lg text-sm hover:text-white transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 bg-gamestore-electric text-white font-bold py-2.5 rounded-lg text-sm hover:bg-gamestore-electric/90 transition-all shadow-lg shadow-gamestore-electric/10">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+<script>
+    function conmutarModoEdicion() {
+        const lectura = document.getElementById('vista-lectura');
+        const edicion = document.getElementById('vista-edicion');
+        const btnTexto = document.getElementById('texto-btn');
+        const btnEditar = document.getElementById('btn-editar');
+
+        // Alternamos la clase hidden entre los dos contenedores
+        lectura.classList.toggle('hidden');
+        edicion.classList.toggle('hidden');
+
+        // Cambiamos el estilo y texto del botón de arriba según el estado
+        if (edicion.classList.contains('hidden')) {
+            btnTexto.innerText = "Editar Perfil";
+            btnEditar.classList.remove('opacity-50'); // Restaura el botón normal
+        } else {
+            btnTexto.innerText = "Ver Perfil";
+            btnEditar.classList.add('opacity-50'); // Le da un toque visual de "activo"
+        }
+    }
+</script>
+{% if form.errors %}
+<script>
+    // Si Django devolvió errores, ejecutamos la función de una para abrir el formulario al cargar
+    conmutarModoEdicion();
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Cargar Saldo - GameStore{% endblock %}
+
+{% block contenido %}
+<div class="bg-gamestore-dark rounded-lg shadow-md p-6 max-w-md mx-auto border border-slate-800/50">
+    <h1 class="text-3xl font-bold mb-2 text-white uppercase">Cargar Saldo</h1>
+    <p class="text-lg text-gamestore-muted font-semibold mb-6 uppercase">Tu saldo actual es: <strong class="text-green-600 text-lg">${{ user.saldo }}</strong></p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="monto" class="text-xs font-gamestore-muted uppercase tracking-wider font-semibold">
+                Monto a acreditar ($):
+            </label>
+            <input type="number" step="0.01" min="1" name="monto" id="monto" placeholder="Ej: 500" 
+            class="w-full border border-gamestore-muted/20 p-2 rounded shadow-sm bg-gamestore-secondary text-white 
+            focus:outline-none focus:ring-2 focus:ring-gamestore-electric" required>
+        </div>
+        <button type="submit" class="w-full bg-gamestore-electric hover:bg-gamestore-electric/50 text-white uppercase font-bold py-2.5 rounded-lg transition duration-200 shadow-sm">
+            Confirmar Acreditación
+        </button>
+    </form>
+</div>
+{% endblock %}

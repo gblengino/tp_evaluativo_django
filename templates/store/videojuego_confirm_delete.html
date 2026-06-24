@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block titulo %}Eliminar Videojuego — GameStore{% endblock %}
+
+{% block contenido %}
+<div class="bg-gamestore-dark rounded-lg shadow-md p-6 max-w-md mx-auto border border-gray-200">
+    <h1 class="text-3xl font-bold mb-4 text-white uppercase">Eliminar videojuego</h1>
+    <p class="text-gray-100 mb-6">
+        ¿Estás seguro de que querés eliminar <strong>{{ videojuego.titulo }}</strong> del catálogo?
+        Esta acción no se puede deshacer.
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="flex gap-3">
+            <button type="submit" class="flex-1 bg-red-600 hover:bg-red-800 text-white font-bold py-2.5 rounded-lg transition-colors shadow-md
+            border border-red-600">
+                Sí, eliminar
+            </button>
+            <a href="{% url 'videojuego_detalle' videojuego.pk %}" class="flex-1 text-center bg-zinc-600 hover:bg-zinc-800 
+            text-white font-semibold py-2.5 rounded-lg transition-colors border border-zinc-700 shadow-md">
+                Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
