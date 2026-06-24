@@ -200,8 +200,6 @@ En la carpeta `capturas/` en la raíz del proyecto se encuentran capturas de pan
 
 ## Integrantes del grupo
 
-| Nombre | Rol |
-|---|---|
-| (completar) | (completar) |
-| (completar) | (completar) |
-| (completar) | (completar) |
+| Benavidez, Tomás |
+| Blengino, Giuliano |
+| Cambria, Valentino |
