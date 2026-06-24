@@ -35,6 +35,9 @@ class Resena(models.Model):
     calificacion = models.IntegerField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        unique_together = ('usuario', 'videojuego')
+
     def __str__(self):
         return f"Reseña de {self.usuario.username} para {self.videojuego.titulo}"
 

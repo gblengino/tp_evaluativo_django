@@ -8,7 +8,7 @@ class CustomUser(AbstractUser):
     fecha_nacimiento = models.DateField(null=True, blank=True, verbose_name="Fecha de Nacimiento")
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True, verbose_name="Foto de Perfil")
 
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['email', 'fecha_nacimiento']
 
     def __str__(self):
         return self.username

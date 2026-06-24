@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 
-{% block titulo %}Cargar Videojuego - GameStore{% endblock %}
+{% block titulo %}{% if editando %}Editar Videojuego{% else %}Cargar Videojuego{% endif %} - GameStore{% endblock %}
 
 {% block contenido %}
+
 <div class="bg-gamestore-dark rounded-lg shadow-md p-6 max-w-lg mx-auto border border-slate-800/50">
-    <h1 class="text-3xl font-bold mb-6 text-center text-white uppercase">Cargar Nuevo Videojuego</h1>
+    <h1 class="text-3xl font-bold mb-6 text-center text-white uppercase">
+        {% if editando %}Editar: {{ videojuego.titulo }}{% else %}Cargar Nuevo Videojuego{% endif %}
+    </h1>
     
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -25,12 +28,19 @@
                     <label for="{{field.id_for_label}}" class="text-xs font-gamestore-muted uppercase tracking-wider font-semibold">
                         {{ field.label }}
                     </label>
-                    {% if field.html_name == 'categorias' %}
+
+                    {% if field|widget_type == 'fileinput' or field|widget_type == 'clearablefileinput' %}
+                        {% if editando and videojuego.imagen_portada %}
+                            <div class="mb-2 flex items-center gap-3">
+                                <img src="{{ videojuego.imagen_portada.url }}" alt="Portada actual" class="w-16 h-16 object-cover rounded border border-gray-300">
+                                <span class="text-xs text-gray-500">Portada actual. Dejá el campo vacío para conservarla.</span>
+                            </div>
+                        {% endif %}
+                        {% render_field field class="w-full text-gray-100 file:hover:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:text-gamestore-dark file:bg-gray-200 hover:file:bg-gamestore-electric/40 hover:file:text-white file:transition-colors file:duration-200" %}
+                    {% elif field.html_name == 'categorias' %}
                         <div class="w-full flex bg-transparent text-gray-100 [&>div]:flex-1 [&>div]:grid [&>div]:grid-cols-1 [&>div]:md:grid-cols-3">
                             {{ field }}
                         </div>
-                    {% elif field|widget_type == 'fileinput' or field|widget_type == 'clearablefileinput' %}
-                        {% render_field field class="w-full text-gray-100 file:hover:cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:text-gamestore-dark file:bg-gray-200 hover:file:bg-gamestore-electric/40 hover:file:text-white file:transition-colors file:duration-200" %}
                     {% else %}
                         {% render_field field class="w-full border border-gamestore-muted/20 p-2 rounded shadow-sm bg-gamestore-secondary text-white focus:outline-none focus:ring-2 focus:ring-gamestore-electric" WIDGET_ERROR_CLASS="border-red-500 bg-red-500/5 focus:border-red-500" %}
                     {% endif %}
